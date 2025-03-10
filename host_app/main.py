@@ -39,10 +39,40 @@ def main():
   if not check_docker():
     log("Docker is not running.")
     return
+  log("Docker is running.")
+  gpu_check()
   res = runner()
   log("Result:", res)
   log("Done.")
   return
+
+
+def cuda_checker():
+  res = run_command(["nvidia-smi"])
+  if res == "":
+    return False
+  return True
+
+def pytorch_cuda_checker():
+  import torch
+  if torch.cuda.is_available():
+    device = torch.device("cuda")
+    # print GPU info from torch
+    log("PyTorch CUDA is available.")
+    log("PyTorch CUDA Device:", device)
+    log("PyTorch CUDA Device Name:", torch.cuda.get_device_name(0))
+    return True
+  return False
+
+def gpu_check():
+  log("Checking GPU...")
+  if not cuda_checker():
+    log("CUDA is not available.")
+    return False
+  if not pytorch_cuda_checker():
+    log("PyTorch CUDA is not available.")
+    return False
+  return True
   
 if __name__ == '__main__':
   main()
