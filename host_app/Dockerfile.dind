@@ -1,0 +1,14 @@
+FROM docker:dind
+
+# add python
+RUN apk add --no-cache python3 py3-pip
+
+WORKDIR /app
+
+COPY main.py .
+COPY custom-entrypoint.sh .
+RUN chmod +x custom-entrypoint.sh
+
+# Use a custom entrypoint to start dockerd first, then run Python
+ENTRYPOINT ["./custom-entrypoint.sh"]
+CMD ["python3", "main.py"]
