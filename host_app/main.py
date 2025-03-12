@@ -48,7 +48,12 @@ def main():
 
 
 def cuda_checker():
-  res = run_command(["nvidia-smi"])
+  try:
+    res = run_command(["nvidia-smi"])
+  except Exception as e:
+    log(f"Error: {e}")
+    res = ""
+
   if res == "":
     return False
   return True

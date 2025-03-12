@@ -44,7 +44,7 @@ RUN set -eux; \
     echo 'dockremap:165536:65536' >> /etc/subgid
 
 # Copy entrypoint script
-COPY _entrypoint.sh /usr/local/bin/dockerd-entrypoint.sh
+COPY entrypoint.sh /usr/local/bin/dockerd-entrypoint.sh
 RUN chmod +x /usr/local/bin/dockerd-entrypoint.sh
 
 # Set entrypoint
