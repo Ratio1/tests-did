@@ -1,0 +1,53 @@
+
+FROM aidamian/base_edge_node:x86_64-py3.10.12-th2.3.1.cu121-tr4.43.3
+# Set environment variables
+
+ENV DOCKER_VERSION=28.0.0 \
+    DOCKER_TLS_CERTDIR=/certs \
+    DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies and enable universe repo for fuse-overlayfs
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release \
+    iptables \
+    iproute2 \
+    xz-utils \
+    pigz \
+    unzip \
+    software-properties-common \
+    fuse-overlayfs \
+	uidmap \
+	&& rm -rf /var/lib/apt/lists/*
+
+
+# Add Docker’s official GPG key and repository
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | tee /etc/apt/keyrings/docker.asc > /dev/null && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+    https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    docker-ce \
+    docker-ce-cli \
+    containerd.io \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# Configure user namespace remapping
+RUN set -eux; \
+    addgroup --system dockremap; \
+    adduser --system --ingroup dockremap dockremap; \
+    echo 'dockremap:165536:65536' >> /etc/subuid; \
+    echo 'dockremap:165536:65536' >> /etc/subgid
+
+# Copy entrypoint script
+COPY entrypoint.sh /usr/local/bin/dockerd-entrypoint.sh
+RUN chmod +x /usr/local/bin/dockerd-entrypoint.sh
+
+# Set entrypoint
+ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]
+CMD []
