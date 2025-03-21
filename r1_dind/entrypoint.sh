@@ -41,7 +41,7 @@ _tls_generate_certs() {
 		_tls_ensure_private "$dir/ca/key.pem"
 		openssl req -new -key "$dir/ca/key.pem" \
 			-out "$dir/ca/cert.pem" \
-			-subj '/CN=docker:dind CA' -x509 -days "$certValidDays"
+			-subj '/CN=R1-dind CA' -x509 -days "$certValidDays"
 	fi
 
 	if [ -s "$dir/ca/key.pem" ]; then
@@ -50,7 +50,7 @@ _tls_generate_certs() {
 		_tls_ensure_private "$dir/server/key.pem"
 		openssl req -new -key "$dir/server/key.pem" \
 			-out "$dir/server/csr.pem" \
-			-subj '/CN=docker:dind server'
+			-subj '/CN=R1-dind server'
 		cat > "$dir/server/openssl.cnf" <<-EOF
 			[ x509_exts ]
 			subjectAltName = $(_tls_san)
@@ -76,7 +76,7 @@ _tls_generate_certs() {
 		openssl req -new \
 				-key "$dir/client/key.pem" \
 				-out "$dir/client/csr.pem" \
-				-subj '/CN=docker:dind client'
+				-subj '/CN=R1-dind client'
 		cat > "$dir/client/openssl.cnf" <<-'EOF'
 			[ x509_exts ]
 			extendedKeyUsage = clientAuth

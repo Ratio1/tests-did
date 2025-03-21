@@ -1,0 +1,11 @@
+[
+    {
+       "image": "nginx:latest", 
+       "registry": null, 
+       "username": null, 
+       "password": null, 
+       "ports": ["8080:80"], 
+       "volumes": ["nginx:/etc/nginx"],
+       "env": ["DEBUG=false"]
+    }
+]

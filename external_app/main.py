@@ -1,4 +1,11 @@
+import os
+from fastapi import FastAPI, Request
 
+print(os.environ) 
 
-if __name__ == '__main__':
-  print('Hello, world!')
+app = FastAPI()
+
+@app.post("/echo")
+async def echo(request: Request):
+    data = await request.json()
+    return {"echo": data}
